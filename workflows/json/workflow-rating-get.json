@@ -1,0 +1,27 @@
+{
+  "name": "Get Workflow Rating",
+  "description": "Get rating information for a specific workflow",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-rating",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-rating": {
+      "inputs": {
+        "operation": "get-rating",
+        "workflowId": "${ctx.request.query.workflowId}"
+      }
+    }
+  }
+} 

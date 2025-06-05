@@ -27,6 +27,7 @@
     "setup:db": "DB_HOST=localhost DB_PASSWORD=blok123 node setup-database.js",
     "test:auth": "node tests/auth.test.js",
     "test:simple": "node tests/simple-server.test.js",
+    "test:phase3": "node tests/phase3.test.js",
     "test:phase2": "node tests/phase2.test.js"
   },
   "devDependencies": {
@@ -61,6 +62,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/mongodb": "^4.0.7",
     "ai": "^4.1.50",
+    "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "body-parser": "1.20.3",
     "cors": "2.8.5",

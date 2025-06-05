@@ -1,0 +1,29 @@
+{
+  "name": "Get Workflow Comments",
+  "description": "Get comments for a specific workflow",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-comments",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-comments": {
+      "inputs": {
+        "operation": "get-comments",
+        "workflowId": "${ctx.request.query.workflowId}",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0"
+      }
+    }
+  }
+} 

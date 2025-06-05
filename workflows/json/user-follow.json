@@ -1,0 +1,28 @@
+{
+  "name": "Follow User",
+  "description": "Follow another user",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "follow-user",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "follow-user": {
+      "inputs": {
+        "operation": "follow-user",
+        "token": "${ctx.request.headers.authorization}",
+        "targetUserId": "${ctx.request.body.targetUserId}"
+      }
+    }
+  }
+} 

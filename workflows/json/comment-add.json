@@ -1,0 +1,30 @@
+{
+  "name": "Add Workflow Comment",
+  "description": "Add a comment to a workflow",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "add-comment",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "add-comment": {
+      "inputs": {
+        "operation": "add-comment",
+        "token": "${ctx.request.headers.authorization}",
+        "workflowId": "${ctx.request.body.workflowId}",
+        "content": "${ctx.request.body.content}",
+        "parentCommentId": "js/ctx.request.body.parentCommentId || null"
+      }
+    }
+  }
+} 

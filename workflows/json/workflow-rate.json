@@ -1,0 +1,30 @@
+{
+  "name": "Rate Workflow",
+  "description": "Add or update a rating for a workflow",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "rate-workflow",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "rate-workflow": {
+      "inputs": {
+        "operation": "rate-workflow",
+        "token": "${ctx.request.headers.authorization}",
+        "workflowId": "${ctx.request.body.workflowId}",
+        "rating": "js/ctx.request.body.rating",
+        "reviewText": "${ctx.request.body.reviewText}"
+      }
+    }
+  }
+} 

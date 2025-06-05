@@ -1,0 +1,29 @@
+{
+  "name": "Get User Favorites",
+  "description": "Get user's favorite workflows",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-favorites",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-favorites": {
+      "inputs": {
+        "operation": "get-favorites",
+        "token": "${ctx.request.headers.authorization}",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0"
+      }
+    }
+  }
+} 

@@ -1,0 +1,29 @@
+{
+  "name": "Get Activity Feed",
+  "description": "Get user's personalized activity feed from followed users",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-activity-feed",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-activity-feed": {
+      "inputs": {
+        "operation": "get-activity-feed",
+        "token": "${ctx.request.headers.authorization}",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0"
+      }
+    }
+  }
+} 

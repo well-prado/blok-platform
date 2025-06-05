@@ -1,0 +1,28 @@
+{
+  "name": "Favorite Workflow",
+  "description": "Add a workflow to user's favorites",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "favorite-workflow",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "favorite-workflow": {
+      "inputs": {
+        "operation": "favorite-workflow",
+        "token": "${ctx.request.headers.authorization}",
+        "workflowId": "${ctx.request.body.workflowId}"
+      }
+    }
+  }
+} 

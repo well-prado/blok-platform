@@ -1,0 +1,28 @@
+{
+  "name": "Unfavorite Workflow",
+  "description": "Remove a workflow from user's favorites",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "unfavorite-workflow",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "unfavorite-workflow": {
+      "inputs": {
+        "operation": "unfavorite-workflow",
+        "token": "${ctx.request.headers.authorization}",
+        "workflowId": "${ctx.request.body.workflowId}"
+      }
+    }
+  }
+} 

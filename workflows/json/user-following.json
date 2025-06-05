@@ -1,0 +1,29 @@
+{
+  "name": "Get User Following",
+  "description": "Get users that a specific user is following",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-following",
+      "node": "community-interaction",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-following": {
+      "inputs": {
+        "operation": "get-following",
+        "targetUserId": "${ctx.request.query.userId}",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0"
+      }
+    }
+  }
+} 
