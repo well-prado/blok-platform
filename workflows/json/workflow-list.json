@@ -1,0 +1,30 @@
+{
+  "name": "List Public Workflows",
+  "description": "List all public workflows with pagination",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "list-workflows",
+      "node": "workflow-manager",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "list-workflows": {
+      "inputs": {
+        "operation": "list",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0",
+        "sortBy": "${ctx.request.query.sortBy}",
+        "sortOrder": "js/ctx.request.query.sortOrder || 'desc'"
+      }
+    }
+  }
+} 

@@ -1,0 +1,31 @@
+{
+  "name": "Get My Workflows",
+  "description": "Get authenticated user's workflows",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-user-workflows",
+      "node": "workflow-manager",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-user-workflows": {
+      "inputs": {
+        "operation": "get-by-user",
+        "token": "${ctx.request.headers.authorization}",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0",
+        "sortBy": "${ctx.request.query.sortBy}",
+        "sortOrder": "js/ctx.request.query.sortOrder || 'desc'"
+      }
+    }
+  }
+} 

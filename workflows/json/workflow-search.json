@@ -1,0 +1,29 @@
+{
+  "name": "Search Workflows",
+  "description": "Search public workflows by name, description, or tags",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "search-workflows",
+      "node": "workflow-manager",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "search-workflows": {
+      "inputs": {
+        "operation": "search",
+        "query": "${ctx.request.query.q}",
+        "limit": "js/parseInt(ctx.request.query.limit) || 20",
+        "offset": "js/parseInt(ctx.request.query.offset) || 0"
+      }
+    }
+  }
+} 

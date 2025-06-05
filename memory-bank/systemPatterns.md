@@ -197,6 +197,42 @@ The frontend is composed of independent, deployable modules:
 - Multi-turn conversation management
 - Error handling and clarification requests
 
+### Critical Blok Framework Workflow Syntax (VERIFIED)
+**Context Variable Patterns (ESSENTIAL)**
+- **Strings**: `"${ctx.request.body.field}"` - Direct string interpolation
+- **Numbers/Booleans/Objects**: `"js/ctx.request.body.field"` - JavaScript evaluation
+- **Arrays/Objects from vars**: `"js/ctx.vars.generated_patterns"` - Variable access
+
+**Common Request Patterns:**
+- Body data: `"${ctx.request.body.email}"`, `"${ctx.request.body.username}"`
+- Query params: `"${ctx.request.query.limit}"`, `"js/ctx.request.query.count"`
+- Path params: `"${ctx.request.params.id}"`, `"${ctx.request.params.workflowId}"`
+- Numbers: `"js/ctx.request.body.count"`, `"js/ctx.request.body.rating"`
+- Booleans: `"js/ctx.request.body.overwrite"`, `"js/ctx.request.body.isPublic"`
+
+**Working Examples from Auth System:**
+```json
+"inputs": {
+  "operation": "register",
+  "email": "${ctx.request.body.email}",
+  "password": "${ctx.request.body.password}",
+  "username": "${ctx.request.body.username}"
+}
+```
+
+**Key Rules:**
+- Always use `ctx.request.body` NOT `ctx.body`
+- String interpolation for simple strings
+- JavaScript evaluation for complex data types
+- Each workflow JSON file becomes an endpoint (filename = URL path)
+- Always use `"path": "/"` unless expecting parameters
+
+**CRITICAL: Server Startup Commands**
+- **NEVER** use `pnpm start` or `node dist/index.js` for development
+- **ALWAYS** use `pnpm dev` to start the development server
+- The dev command properly handles hot reloading and workflow registration
+- Using the wrong startup command causes workflow registration failures
+
 ## Security Architecture Patterns
 
 ### Zero Trust Security Model

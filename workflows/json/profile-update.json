@@ -1,0 +1,31 @@
+{
+  "name": "Update User Profile",
+  "description": "Update authenticated user's profile information",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "PUT",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "update-profile",
+      "node": "user-profile",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "update-profile": {
+      "inputs": {
+        "operation": "update-profile",
+        "token": "${ctx.request.headers.authorization}",
+        "firstName": "${ctx.request.body.firstName}",
+        "lastName": "${ctx.request.body.lastName}",
+        "bio": "${ctx.request.body.bio}",
+        "profileImageUrl": "${ctx.request.body.profileImageUrl}"
+      }
+    }
+  }
+} 

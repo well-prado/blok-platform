@@ -1,0 +1,36 @@
+{
+  "name": "Create Workflow",
+  "description": "Create a new workflow in the platform",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "create-workflow",
+      "node": "workflow-manager",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "create-workflow": {
+      "inputs": {
+        "operation": "create",
+        "token": "${ctx.request.headers.authorization}",
+        "name": "${ctx.request.body.name}",
+        "description": "${ctx.request.body.description}",
+        "version": "${ctx.request.body.version}",
+        "trigger": "js/ctx.request.body.trigger",
+        "steps": "js/ctx.request.body.steps",
+        "nodes": "js/ctx.request.body.nodes",
+        "category": "${ctx.request.body.category}",
+        "tags": "js/ctx.request.body.tags",
+        "isPublic": "js/ctx.request.body.isPublic"
+      }
+    }
+  }
+} 
