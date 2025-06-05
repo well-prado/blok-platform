@@ -1,0 +1,185 @@
+# Blok Community Platform - Project Intelligence
+
+## Core Framework Understanding
+- **Blok Framework**: Modern backend framework focused on modular, testable, observable systems
+- **Architecture**: Node-based workflow composition with JSON/YAML/TOML definitions
+- **Multi-Runtime**: Primary Node.js support, Python/Bun in development
+- **CLI-First**: `nanoctl` for project management and development workflows
+- **Observability**: Built-in Prometheus metrics and OpenTelemetry integration
+
+## Project Mission
+Building a revolutionary community-driven platform that combines Blok framework capabilities with AI-powered workflow generation using OpenManus agents. This platform will serve as the central hub for the Blok ecosystem, enabling developers to discover, share, and create sophisticated workflows.
+
+## Key Technical Patterns
+
+### Blok Framework Patterns
+- **Nodes**: Self-contained, reusable logic units with clear inputs/outputs
+- **Workflows**: Declarative compositions that orchestrate node execution
+- **Context (CTX)**: Shared execution object carrying parameters, I/O, and metadata
+- **Triggers**: HTTP (current), gRPC and event-based (planned)
+- **Built-in Observability**: Prometheus metrics out of the box
+
+### Critical Blok Implementation Rules
+- **No Traditional REST**: All API functionality must be implemented as Blok nodes and workflows
+- **Workflow = Endpoint**: Each workflow JSON file becomes an endpoint (filename maps to URL)
+- **Path Convention**: Always use `"path": "/"` unless expecting parameters
+- **Node Registration**: All custom nodes must be registered in `src/Nodes.ts`
+- **Workflow Storage**: All workflows go in `/workflows/json/` folder
+- **Example**: `users.json` workflow → `localhost:4000/users` endpoint
+
+### Architecture Decisions Made
+- **Frontend**: React 18 + TypeScript + Vite for optimal development experience
+- **State Management**: Zustand for client state, React Query for server state
+- **Database Strategy**: Polyglot persistence (PostgreSQL, MongoDB, Redis)
+- **AI Integration**: OpenManus agents for natural language workflow generation
+- **Development**: Monolithic React app initially, migrate to micro-frontends in Phase 3
+
+### Current Project Structure
+```
+blok-platform/
+├── src/
+│   ├── nodes/              # Custom node implementations
+│   ├── workflows/          # Workflow definitions (JSON/YAML/TOML)
+│   ├── runner/             # Workflow execution engine
+│   ├── Nodes.ts           # Node registry
+│   ├── Workflows.ts       # Workflow registry
+│   ├── AppRoutes.ts       # HTTP routing configuration
+│   └── index.ts           # Application entry point
+├── docs/                   # Comprehensive documentation and PRD
+├── infra/                  # Infrastructure and deployment configs
+├── memory-bank/           # Project memory and documentation
+└── package.json           # Dependencies and scripts
+```
+
+## Development Priorities
+
+### Immediate Phase 1 Tasks (Months 1-4)
+1. **Frontend Bootstrap**: React application with Vite and TypeScript
+2. **Database Design**: PostgreSQL and MongoDB schemas for users and workflows
+3. **Authentication**: JWT with OAuth providers (GitHub, Google)
+4. **Basic API**: RESTful endpoints for user and workflow management
+5. **Atomic-Canvas Integration**: Workflow visualization components
+
+### Critical Missing Components
+- **Complete Frontend**: No React application exists yet
+- **Database Schemas**: PostgreSQL and MongoDB schemas need implementation
+- **Redis Integration**: Caching layer not configured
+- **Community Features**: User profiles, ratings, social interactions
+- **AI Integration**: OpenManus workflow generation capabilities
+
+## Technology Stack Details
+
+### Current Dependencies (Working)
+- **Core Framework**: @nanoservice-ts/* packages for workflow execution
+- **Web Framework**: Express with CORS and body-parser
+- **AI Integration**: Vercel AI SDK with OpenAI provider
+- **Databases**: PostgreSQL (pg) and MongoDB clients
+- **Development**: TypeScript, nanoctl CLI, copyfiles, rimraf
+
+### Required Additions
+- **Frontend**: React 18, React Router, Tailwind CSS, Framer Motion
+- **State Management**: Zustand, @tanstack/react-query, react-hook-form
+- **Build Tools**: Vite, @vitejs/plugin-react, vite-tsconfig-paths
+- **Enhanced AI**: Langchain, Pinecone for vector search
+- **Real-time**: Socket.io for collaboration features
+- **Caching**: Redis/ioredis for session and application caching
+
+## User Personas and Use Cases
+
+### Primary Users
+1. **Backend Developers**: Need modular, testable workflow solutions
+2. **DevOps Engineers**: Require automation and infrastructure workflows
+3. **Data Scientists**: Want data processing and ML deployment pipelines
+4. **System Architects**: Evaluate platforms for enterprise adoption
+
+### Core User Flows
+1. **Discovery**: Natural language search → AI-powered results → Visual previews
+2. **Evaluation**: Interactive exploration → AI chat assistance → Compatibility check
+3. **Implementation**: One-click deployment → Guided customization → Testing integration
+4. **Contribution**: Easy sharing → Peer review → Version management → Recognition
+
+## AI Integration Strategy
+
+### OpenManus Integration Goals
+- **Natural Language to Workflow**: Convert user intent to executable workflows
+- **Streaming Responses**: Progressive generation with user feedback
+- **Context Awareness**: Understand user preferences and project context
+- **Continuous Learning**: Community contributions improve AI capabilities
+
+### AI Features to Implement
+- **Conversational Interface**: Chat-based workflow generation assistance
+- **Semantic Search**: Vector embeddings for intelligent content discovery
+- **Personalized Recommendations**: ML-powered workflow suggestions
+- **Quality Assurance**: AI validation of generated workflow quality
+
+## Competitive Positioning
+
+### Key Differentiators vs Competitors
+- **vs n8n**: Multi-runtime support, AI-native generation, developer-first design
+- **vs Zapier**: Technical depth, code-first approach, backend focus
+- **vs Power Automate**: Open-source foundation, flexibility, no vendor lock-in
+
+### Unique Value Propositions
+1. **AI-Powered Generation**: First-class natural language workflow creation
+2. **Multi-Runtime Flexibility**: Node.js, Python, Bun support
+3. **Developer-First**: Built by developers, for developers
+4. **Community-Driven Dataset**: Unique training data for AI improvement
+5. **Atomic-Canvas Integration**: Visual editing with code-first principles
+
+## Development Best Practices
+
+### Code Quality Standards
+- **TypeScript**: Strict typing throughout the application
+- **Testing**: Unit, integration, and E2E testing required
+- **Documentation**: Comprehensive API docs with OpenAPI
+- **Security**: Input validation, authentication, authorization at every layer
+
+### Git Workflow
+- **Branching**: Feature branches from main, merge via pull requests
+- **Commits**: Conventional commits for automated changelog generation
+- **Reviews**: Required for all changes, emphasis on security and performance
+
+### Performance Requirements
+- **Frontend**: <2s page load, <100ms UI interactions
+- **API**: <200ms response times, proper caching strategies
+- **Database**: Optimized queries, appropriate indexing
+- **AI**: <2s response times for simple generation requests
+
+## Known Challenges and Solutions
+
+### Technical Challenges
+1. **Multi-Runtime Execution**: Solved via server-side preview/execution
+2. **Real-Time Collaboration**: Implement operational transforms or CRDTs
+3. **AI Response Streaming**: Use WebSockets for progressive updates
+4. **Atomic-Canvas Integration**: NPM package integration with React components
+
+### Resource Constraints
+- **Team Size**: Need 4-6 developers for Phase 1 implementation
+- **Infrastructure**: Production-grade services required for testing
+- **AI Dependencies**: OpenManus API stability and performance requirements
+
+## Success Metrics Tracking
+
+### Technical KPIs
+- Performance: <2s page load, <200ms API response, 99.9% uptime
+- Quality: 95% test coverage, zero critical security vulnerabilities
+- Scalability: 10,000 concurrent users, auto-scaling capabilities
+
+### Business KPIs
+- Community: 10,000 users Year 1, 1,000 active contributors
+- Content: 5,000 published workflows, 85% AI satisfaction rating
+- Revenue: $500K ARR, break-even by Month 18
+
+## Implementation Notes
+
+### Memory Bank Maintenance
+- **Core Files**: projectbrief.md, productContext.md, systemPatterns.md, techContext.md, activeContext.md, progress.md
+- **Update Triggers**: Major feature implementations, architecture changes, user feedback integration
+- **Focus Areas**: Current development phase, active challenges, next steps
+
+### Development Environment
+- **Local Setup**: Docker compose for databases, hot reload for development
+- **CI/CD**: GitHub Actions for automated testing and deployment
+- **Monitoring**: Prometheus metrics, Grafana dashboards, centralized logging
+
+This project intelligence captures the essential patterns, decisions, and context needed to develop the Blok Community Platform effectively. 

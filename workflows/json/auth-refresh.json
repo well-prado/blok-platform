@@ -1,0 +1,27 @@
+{
+	"name": "Refresh Token",
+	"description": "Refresh JWT access token using refresh token",
+	"version": "1.0.0",
+	"trigger": {
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"accept": "application/json"
+		}
+	},
+	"steps": [
+		{
+			"name": "refresh-token",
+			"node": "user-auth",
+			"type": "module"
+		}
+	],
+	"nodes": {
+		"refresh-token": {
+			"inputs": {
+				"operation": "refresh-token",
+				"refreshToken": "${ctx.request.body.refreshToken}"
+			}
+		}
+	}
+} 

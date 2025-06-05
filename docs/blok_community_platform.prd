@@ -1,0 +1,51 @@
+# Blok Community Platform PRD
+
+## Product Vision
+Create a community-driven platform for Blok (formerly Nanoservice-ts) that enables developers to share workflows and nodes while providing AI-powered generation capabilities using OpenManus agents.
+
+## Core Features
+- Workflow discovery and sharing
+- Node library and management
+- AI-powered workflow generation
+- Community features (profiles, ratings, collaboration)
+- Atomic-canvas integration for live editing
+- Multi-runtime support
+
+## Technical Stack
+- Frontend: React 18, TypeScript, Zustand, React Query
+- Backend: Node.js/Python microservices
+- Database: PostgreSQL, MongoDB, Redis
+- AI: OpenManus integration
+- Infrastructure: Kubernetes, cloud-native
+
+## User Personas
+1. Backend Developers (primary)
+2. DevOps Engineers
+3. Data Scientists
+4. System Architects
+
+## Success Metrics
+- User acquisition: 10K users Year 1
+- Content creation: 5K workflows
+- AI satisfaction: 85% user satisfaction
+- Revenue: $500K ARR Year 1
+
+## Implementation Phases
+1. Foundation (Months 1-4)
+2. Community + AI (Months 5-8)
+3. Advanced Features (Months 9-12)
+4. Launch Prep (Months 13-16)
+
+## Investment
+- Team: 18-22 developers
+- Budget: $3.2-4.5M
+- Timeline: 16 months
+- ROI: Break-even Month 18
+
+## Competitive Advantage
+- AI-powered generation
+- Multi-runtime support
+- Developer-first design
+- Atomic-canvas integration
+- Community-driven dataset
+

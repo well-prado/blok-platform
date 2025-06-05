@@ -1,0 +1,28 @@
+{
+	"name": "User Login",
+	"description": "Authenticate user and return JWT tokens",
+	"version": "1.0.0",
+	"trigger": {
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"accept": "application/json"
+		}
+	},
+	"steps": [
+		{
+			"name": "login-user",
+			"node": "user-auth",
+			"type": "module"
+		}
+	],
+	"nodes": {
+		"login-user": {
+			"inputs": {
+				"operation": "login",
+				"email": "${ctx.request.body.email}",
+				"password": "${ctx.request.body.password}"
+			}
+		}
+	}
+} 

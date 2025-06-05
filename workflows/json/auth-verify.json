@@ -1,0 +1,27 @@
+{
+	"name": "Verify Token",
+	"description": "Verify JWT token and return user information",
+	"version": "1.0.0",
+	"trigger": {
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"accept": "application/json"
+		}
+	},
+	"steps": [
+		{
+			"name": "verify-token",
+			"node": "user-auth",
+			"type": "module"
+		}
+	],
+	"nodes": {
+		"verify-token": {
+			"inputs": {
+				"operation": "verify-token",
+				"token": "${ctx.request.body.token}"
+			}
+		}
+	}
+} 

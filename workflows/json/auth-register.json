@@ -1,0 +1,29 @@
+{
+	"name": "User Registration",
+	"description": "Register a new user account",
+	"version": "1.0.0",
+	"trigger": {
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"accept": "application/json"
+		}
+	},
+	"steps": [
+		{
+			"name": "register-user",
+			"node": "user-auth",
+			"type": "module"
+		}
+	],
+	"nodes": {
+		"register-user": {
+			"inputs": {
+				"operation": "register",
+				"email": "${ctx.request.body.email}",
+				"password": "${ctx.request.body.password}",
+				"username": "${ctx.request.body.username}"
+			}
+		}
+	}
+} 

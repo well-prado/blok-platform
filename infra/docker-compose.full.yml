@@ -1,0 +1,236 @@
+version: '3.8'
+
+services:
+  # Main Blok Platform Application
+  blok-platform:
+    container_name: blok-platform
+    hostname: blok-platform
+    build:
+      context: ../
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+      - "9091:9091"  # Metrics endpoint
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=blok_platform
+      - DB_USER=postgres
+      - DB_PASSWORD=blok123
+      - MONGO_URI=mongodb://mongo:27017/blok_platform
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=blok-platform-super-secret-key-dev-only
+      - JWT_REFRESH_SECRET=blok-platform-refresh-secret-key-dev-only
+      - PORT=4000
+    depends_on:
+      - postgres
+      - mongo
+      - redis
+    develop:
+      watch:
+        - action: sync
+          path: ../dist
+          target: /usr/src/app/dist
+        - action: sync
+          path: ../workflows
+          target: /usr/src/app/workflows
+        - action: sync
+          path: ../public
+          target: /usr/src/app/public
+        - action: rebuild
+          path: ../package.json
+        - action: rebuild
+          path: ../tsconfig.json
+    volumes:
+      - ../dist:/usr/src/app/dist
+      - ../workflows:/usr/src/app/workflows
+      - ../public:/usr/src/app/public
+    networks:
+      - blok-network
+    restart: unless-stopped
+
+  # PostgreSQL Database (Users, Auth, Metadata)
+  postgres:
+    image: postgres:16-alpine
+    container_name: blok-postgres
+    hostname: postgres
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: blok123
+      POSTGRES_DB: blok_platform
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - blok-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d blok_platform"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MongoDB (Workflows, Community Data, AI Vectors)
+  mongo:
+    image: mongo:7-jammy
+    container_name: blok-mongo
+    hostname: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: blok123
+      MONGO_INITDB_DATABASE: blok_platform
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ../database/mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - blok-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis (Caching, Sessions, Rate Limiting)
+  redis:
+    image: redis:7-alpine
+    container_name: blok-redis
+    hostname: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - blok-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL Admin UI
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: blok-pgadmin
+    hostname: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@blok.dev
+      PGADMIN_DEFAULT_PASSWORD: blok123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - blok-network
+    depends_on:
+      - postgres
+
+  # MongoDB Admin UI
+  mongo-express:
+    image: mongo-express:latest
+    container_name: blok-mongo-express
+    hostname: mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: blok123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:blok123@mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: blok123
+    ports:
+      - "8081:8081"
+    networks:
+      - blok-network
+    depends_on:
+      - mongo
+
+  # Redis Admin UI
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: blok-redis-commander
+    hostname: redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379
+      HTTP_USER: admin
+      HTTP_PASSWORD: blok123
+    ports:
+      - "8082:8081"
+    networks:
+      - blok-network
+    depends_on:
+      - redis
+
+  # Prometheus (Metrics Collection)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: blok-prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - blok-network
+
+  # Grafana (Metrics Visualization)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: blok-grafana
+    hostname: grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: blok123
+      GF_USERS_ALLOW_SIGN_UP: false
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - blok-network
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+    driver: local
+  mongo_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  blok-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

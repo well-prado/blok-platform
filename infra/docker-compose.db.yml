@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Users, Auth, Metadata)
+  postgres:
+    image: postgres:16-alpine
+    container_name: blok-postgres
+    hostname: postgres
+    restart: unless-stopped
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: blok123
+      POSTGRES_DB: blok_platform
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - blok-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d blok_platform"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MongoDB (Workflows, Community Data)
+  mongo:
+    image: mongo:7-jammy
+    container_name: blok-mongo
+    hostname: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: blok123
+      MONGO_INITDB_DATABASE: blok_platform
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - blok-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis (Caching, Sessions)
+  redis:
+    image: redis:7-alpine
+    container_name: blok-redis
+    hostname: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - blok-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL Admin UI
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: blok-pgadmin
+    hostname: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@blok.dev
+      PGADMIN_DEFAULT_PASSWORD: blok123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - blok-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local
+  mongo_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  blok-network:
+    driver: bridge 
