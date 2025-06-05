@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import { ToastContainer } from './components/Toast';
 import { useAuthStore } from './stores/auth';
+import { useToastStore } from './stores/toast';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -32,6 +34,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const { verifyToken, isAuthenticated } = useAuthStore();
+  const { toasts, removeToast } = useToastStore();
 
   useEffect(() => {
     // Verify token on app start
@@ -93,6 +96,9 @@ function App() {
             </Route>
           </Routes>
         </div>
+        
+        {/* Toast Notifications */}
+        <ToastContainer toasts={toasts} onClose={removeToast} />
       </Router>
       
       {/* React Query Devtools in development */}

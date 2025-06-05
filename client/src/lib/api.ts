@@ -50,6 +50,7 @@ export interface User {
 
 export interface Workflow {
   _id: string;
+  id: string;
   name: string;
   description: string;
   version: string;
@@ -65,6 +66,8 @@ export interface Workflow {
   downloadCount: number;
   rating: number;
   ratingCount: number;
+  averageRating?: number;
+  commentCount?: number;
 }
 
 export interface Comment {
@@ -100,9 +103,10 @@ export interface Activity {
   id: string;
   user_id: string;
   activity_type: string;
+  type: string;
   target_type: string;
   target_id: string;
-  metadata?: object;
+  metadata?: Record<string, unknown>;
   created_at: string;
   username: string;
   first_name?: string;
