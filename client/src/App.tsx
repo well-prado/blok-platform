@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from './components/Toast';
+
 import { useAuthStore } from './stores/auth';
 import { useToastStore } from './stores/toast';
 
@@ -99,6 +100,8 @@ function App() {
         
         {/* Toast Notifications */}
         <ToastContainer toasts={toasts} onClose={removeToast} />
+        
+
       </Router>
       
       {/* React Query Devtools in development */}

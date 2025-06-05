@@ -216,9 +216,9 @@ export default function WorkflowsPage() {
               ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
               : 'space-y-4'
           }>
-                         {workflows.map((workflow: Workflow) => (
-               <WorkflowCard key={workflow._id} workflow={workflow} viewMode={viewMode} />
-             ))}
+                                     {workflows.map((workflow: Workflow) => (
+              <WorkflowCard key={workflow.id || workflow._id} workflow={workflow} viewMode={viewMode} />
+            ))}
           </div>
         )}
 

@@ -207,7 +207,7 @@ export default function DashboardPage() {
                   {suggested.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                           {suggested.slice(0, 3).map((workflow) => (
-                      <WorkflowCard key={workflow._id || workflow.id} workflow={workflow} />
+                      <WorkflowCard key={workflow.id || workflow._id} workflow={workflow} />
                     ))}
                     </div>
                   ) : (

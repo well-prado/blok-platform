@@ -169,6 +169,12 @@ export const profileApi = {
   },
 };
 
+// Utility to transform backend workflow data
+const transformWorkflow = (workflow: Omit<Workflow, 'id'>): Workflow => ({
+  ...workflow,
+  id: workflow._id, // Map _id to id for frontend compatibility
+});
+
 // Workflow API
 export const workflowApi = {
   create: async (data: {
@@ -182,10 +188,7 @@ export const workflowApi = {
     nodes: object;
     version?: string;
   }) => {
-    const response = await api.post('/workflow-create', {
-      operation: 'create',
-      ...data,
-    });
+    const response = await api.post('/workflow-create', data);
     return response.data;
   },
 
@@ -219,9 +222,13 @@ export const workflowApi = {
     sortOrder?: 'asc' | 'desc';
   } = {}) => {
     const response = await api.get('/workflow-list', {
-      params: { operation: 'list', ...params },
+      params,
     });
-    return response.data;
+    const data = response.data;
+    return {
+      ...data,
+      workflows: data.workflows?.map(transformWorkflow) || [],
+    };
   },
 
   search: async (params: {
@@ -234,9 +241,13 @@ export const workflowApi = {
     sortOrder?: 'asc' | 'desc';
   }) => {
     const response = await api.get('/workflow-search', {
-      params: { operation: 'search', ...params },
+      params,
     });
-    return response.data;
+    const data = response.data;
+    return {
+      ...data,
+      workflows: data.workflows?.map(transformWorkflow) || [],
+    };
   },
 
   getByUser: async (params: {
