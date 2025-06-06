@@ -1,0 +1,28 @@
+{
+  "name": "Delete Workflow",
+  "description": "Delete an existing workflow",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "DELETE",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "delete-workflow",
+      "node": "workflow-manager",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "delete-workflow": {
+      "inputs": {
+        "operation": "delete",
+        "token": "${ctx.request.headers.authorization}",
+        "workflowId": "${ctx.request.body.workflowId}"
+      }
+    }
+  }
+} 

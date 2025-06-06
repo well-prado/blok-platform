@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -14,14 +14,15 @@ import {
   MessageCircle,
   Eye,
   Code,
-  GitBranch,
   Clock
 } from 'lucide-react';
 
-import { workflowApi, communityApi, type Comment, type Rating } from '../lib/api';
+import { workflowApi, communityApi, type Comment, type Rating, type Workflow } from '../lib/api';
 import { useAuthStore } from '../stores/auth';
 import { toast } from '../stores/toast';
 import { formatDate, formatRelativeTime, generateAvatarUrl } from '../lib/utils';
+import ErrorBoundary from '../components/ErrorBoundary';
+import WorkflowDiagram from '../components/WorkflowDiagram';
 
 export default function WorkflowDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -56,6 +57,21 @@ export default function WorkflowDetailPage() {
     enabled: !!id,
   });
 
+  // Check if workflow is favorited
+  const { data: favoritesData } = useQuery({
+    queryKey: ['user-favorites'],
+    queryFn: () => communityApi.getFavorites(),
+    enabled: isAuthenticated,
+  });
+
+  // Initialize favorite status based on API data
+  useEffect(() => {
+    if (favoritesData?.workflows && id) {
+      const isFav = favoritesData.workflows.some((w: Workflow) => w._id === id || w.id === id);
+      setIsFavorited(isFav);
+    }
+  }, [favoritesData, id]);
+
   // Mutations
   const favoriteMutation = useMutation({
     mutationFn: (action: 'favorite' | 'unfavorite') => 
@@ -64,6 +80,7 @@ export default function WorkflowDetailPage() {
         : communityApi.unfavoriteWorkflow(id!),
     onSuccess: () => {
       setIsFavorited(!isFavorited);
+      queryClient.invalidateQueries({ queryKey: ['user-favorites'] });
       toast.success(isFavorited ? 'Removed from favorites' : 'Added to favorites');
     },
     onError: () => {
@@ -72,10 +89,11 @@ export default function WorkflowDetailPage() {
   });
 
   const rateMutation = useMutation({
-    mutationFn: (rating: number) => 
-      communityApi.rateWorkflow({ workflowId: id!, rating }),
+    mutationFn: (data: { rating: number; reviewText?: string }) => 
+      communityApi.rateWorkflow({ workflowId: id!, ...data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workflow-ratings', id] });
+      queryClient.invalidateQueries({ queryKey: ['workflow', id] });
       toast.success('Rating submitted successfully');
     },
     onError: () => {
@@ -116,13 +134,13 @@ export default function WorkflowDetailPage() {
     favoriteMutation.mutate(isFavorited ? 'unfavorite' : 'favorite');
   };
 
-  const handleRate = (rating: number) => {
+  const handleRate = (rating: number, reviewText?: string) => {
     if (!isAuthenticated) {
       toast.warning('Please login to rate workflows');
       return;
     }
     setUserRating(rating);
-    rateMutation.mutate(rating);
+    rateMutation.mutate({ rating, reviewText });
   };
 
   const handleComment = () => {
@@ -180,7 +198,8 @@ export default function WorkflowDetailPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
+    <ErrorBoundary>
+      <div className="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
       <div className="px-4 py-6 sm:px-0">
         {/* Header */}
         <div className="card p-6 mb-6">
@@ -264,9 +283,9 @@ export default function WorkflowDetailPage() {
           </div>
 
           {/* Tags */}
-          {workflow.tags.length > 0 && (
+          {workflow.tags && workflow.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
-                          {workflow.tags.map((tag: string) => (
+                          {workflow.tags?.map((tag: string) => (
               <span key={tag} className="badge-secondary text-sm">
                 <Tag className="h-3 w-3 mr-1" />
                 {tag}
@@ -305,7 +324,7 @@ export default function WorkflowDetailPage() {
             <nav className="flex space-x-8 px-6">
               {[
                 { id: 'overview', label: 'Overview', icon: Eye },
-                { id: 'comments', label: `Comments (${comments.length})`, icon: MessageCircle },
+                { id: 'comments', label: `Comments (${comments?.length || 0})`, icon: MessageCircle },
                 { id: 'ratings', label: `Ratings (${ratingCount})`, icon: Star },
                 { id: 'code', label: 'Definition', icon: Code },
               ].map((tab) => (
@@ -365,16 +384,7 @@ export default function WorkflowDetailPage() {
 
                 <div>
                   <h3 className="text-lg font-semibold text-secondary-900 mb-3">Workflow Structure</h3>
-                  <div className="bg-secondary-50 p-4 rounded-lg">
-                    <div className="text-sm text-secondary-600 mb-2">
-                      Steps: {workflow.steps?.length || 0} | Nodes: {Object.keys(workflow.nodes || {}).length}
-                    </div>
-                    {/* Visual workflow representation would go here */}
-                    <div className="text-center py-8 text-secondary-500">
-                      <GitBranch className="h-12 w-12 mx-auto mb-2" />
-                      <p>Visual workflow diagram coming soon</p>
-                    </div>
-                  </div>
+                  <WorkflowDiagram workflow={workflow} />
                 </div>
               </div>
             )}
@@ -384,7 +394,7 @@ export default function WorkflowDetailPage() {
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold text-secondary-900">
-                    Comments ({comments.length})
+                    Comments ({comments?.length || 0})
                   </h3>
                   {isAuthenticated && (
                     <button
@@ -425,13 +435,13 @@ export default function WorkflowDetailPage() {
 
                 {/* Comments List */}
                 <div className="space-y-4">
-                  {comments.length === 0 ? (
+                  {!comments || comments.length === 0 ? (
                     <div className="text-center py-8 text-secondary-500">
                       <MessageCircle className="h-12 w-12 mx-auto mb-2" />
                       <p>No comments yet. Be the first to share your thoughts!</p>
                     </div>
                   ) : (
-                    comments.map((comment: Comment) => (
+                    comments?.map((comment: Comment) => (
                       <CommentCard key={comment.id} comment={comment} />
                     ))
                   )}
@@ -447,13 +457,13 @@ export default function WorkflowDetailPage() {
                 </h3>
                 
                 <div className="space-y-4">
-                  {ratings.length === 0 ? (
+                  {!ratings || ratings.length === 0 ? (
                     <div className="text-center py-8 text-secondary-500">
                       <Star className="h-12 w-12 mx-auto mb-2" />
                       <p>No ratings yet. Be the first to rate this workflow!</p>
                     </div>
                   ) : (
-                    ratings.map((rating: Rating) => (
+                    ratings?.map((rating: Rating) => (
                       <RatingCard key={rating.id} rating={rating} />
                     ))
                   )}
@@ -484,6 +494,7 @@ export default function WorkflowDetailPage() {
         </div>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
 

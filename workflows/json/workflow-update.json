@@ -1,0 +1,37 @@
+{
+  "name": "Update Workflow",
+  "description": "Update an existing workflow",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "PUT",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "update-workflow",
+      "node": "workflow-manager",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "update-workflow": {
+      "inputs": {
+        "operation": "update",
+        "token": "${ctx.request.headers.authorization}",
+        "workflowId": "${ctx.request.body.workflowId}",
+        "name": "${ctx.request.body.name}",
+        "description": "${ctx.request.body.description}",
+        "category": "${ctx.request.body.category}",
+        "tags": "${ctx.request.body.tags}",
+        "isPublic": "${ctx.request.body.isPublic}",
+        "trigger": "${ctx.request.body.trigger}",
+        "steps": "${ctx.request.body.steps}",
+        "nodes": "${ctx.request.body.nodes}",
+        "version": "${ctx.request.body.version}"
+      }
+    }
+  }
+} 

@@ -3,6 +3,7 @@ import { Search, User, LogOut, Menu, X, Plus, Home, Briefcase } from 'lucide-rea
 import { useState } from 'react';
 import { useAuthStore } from '../stores/auth';
 import { generateAvatarUrl } from '../lib/utils';
+import ToastContainer from './ToastContainer';
 
 export default function Layout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -77,6 +78,14 @@ export default function Layout() {
                     type="text"
                     placeholder="Search workflows..."
                     className="block w-full pl-10 pr-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder:text-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        const query = (e.target as HTMLInputElement).value;
+                        if (query.trim()) {
+                          window.location.href = `/workflows?search=${encodeURIComponent(query)}`;
+                        }
+                      }
+                    }}
                   />
                 </div>
               </div>
@@ -212,6 +221,9 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
+
+      {/* Toast notifications */}
+      <ToastContainer />
     </div>
   );
 } 

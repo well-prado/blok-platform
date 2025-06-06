@@ -16,7 +16,7 @@ import {
   Zap
 } from 'lucide-react';
 
-import { workflowApi, type Workflow, type Activity as ActivityType } from '../lib/api';
+import { workflowApi, communityApi, type Workflow, type Activity as ActivityType } from '../lib/api';
 import { useAuthStore } from '../stores/auth';
 import { formatRelativeTime, truncateText } from '../lib/utils';
 
@@ -31,24 +31,24 @@ export default function DashboardPage() {
     enabled: !!user?.username,
   });
 
-  // Fetch user's favorites (placeholder - will be implemented)
+  // Fetch user's favorites
   const { data: favoriteWorkflows } = useQuery({
     queryKey: ['user-favorites', user?.username],
-    queryFn: () => Promise.resolve({ workflows: [] as Workflow[] }),
+    queryFn: () => communityApi.getFavorites(),
     enabled: !!user?.username,
   });
 
-  // Fetch personalized recommendations (placeholder - will be implemented)
+  // Fetch personalized recommendations (using recent workflows for now)
   const { data: recommendations } = useQuery({
     queryKey: ['recommendations', user?.username],
-    queryFn: () => Promise.resolve({ workflows: [] as Workflow[] }),
+    queryFn: () => workflowApi.search({ sortBy: 'rating', sortOrder: 'desc', limit: 6 }),
     enabled: !!user?.username,
   });
 
-  // Fetch user activity (placeholder - will be implemented)
+  // Fetch user activity
   const { data: userActivity } = useQuery({
     queryKey: ['user-activity', user?.username],
-    queryFn: () => Promise.resolve({ activities: [] as ActivityType[] }),
+    queryFn: () => communityApi.getActivityFeed({ limit: 10 }),
     enabled: !!user?.username,
   });
 
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                   
                   {suggested.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                          {suggested.slice(0, 3).map((workflow) => (
+                                          {suggested.slice(0, 3).map((workflow: Workflow) => (
                       <WorkflowCard key={workflow.id || workflow._id} workflow={workflow} />
                     ))}
                     </div>
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                   
                   {activity.length > 0 ? (
                     <div className="space-y-3">
-                      {activity.slice(0, 5).map((activity) => (
+                      {activity.slice(0, 5).map((activity: ActivityType) => (
                         <ActivityItem key={activity.id} activity={activity} />
                       ))}
                     </div>
@@ -304,7 +304,7 @@ export default function DashboardPage() {
 
                 {favorites.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {favorites.map((workflow) => (
+                    {favorites.map((workflow: Workflow) => (
                       <WorkflowCard key={workflow.id} workflow={workflow} />
                     ))}
                   </div>
@@ -330,7 +330,7 @@ export default function DashboardPage() {
 
                 {activity.length > 0 ? (
                   <div className="space-y-4">
-                    {activity.map((activity) => (
+                    {activity.map((activity: ActivityType) => (
                       <ActivityItem key={activity.id} activity={activity} />
                     ))}
                   </div>

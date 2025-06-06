@@ -5,16 +5,15 @@ import { useEffect } from 'react';
 
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
-import { ToastContainer } from './components/Toast';
 
 import { useAuthStore } from './stores/auth';
-import { useToastStore } from './stores/toast';
 
 // Pages
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import UserProfilePage from './pages/UserProfilePage';
 import WorkflowsPage from './pages/WorkflowsPage';
 import WorkflowDetailPage from './pages/WorkflowDetailPage';
 import CreateWorkflowPage from './pages/CreateWorkflowPage';
@@ -35,7 +34,6 @@ const queryClient = new QueryClient({
 
 function App() {
   const { verifyToken, isAuthenticated } = useAuthStore();
-  const { toasts, removeToast } = useToastStore();
 
   useEffect(() => {
     // Verify token on app start
@@ -52,6 +50,7 @@ function App() {
               <Route index element={<HomePage />} />
               <Route path="workflows" element={<WorkflowsPage />} />
               <Route path="workflows/:id" element={<WorkflowDetailPage />} />
+              <Route path="users/:username" element={<UserProfilePage />} />
               
               {/* Auth routes - redirect if already authenticated */}
               <Route 
@@ -97,11 +96,6 @@ function App() {
             </Route>
           </Routes>
         </div>
-        
-        {/* Toast Notifications */}
-        <ToastContainer toasts={toasts} onClose={removeToast} />
-        
-
       </Router>
       
       {/* React Query Devtools in development */}

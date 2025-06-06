@@ -133,14 +133,45 @@ export default function ProfilePage() {
       return;
     }
 
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Please upload a valid image file (JPG, PNG, or GIF)');
+      return;
+    }
+
     setIsUploading(true);
     
-    // TODO: Implement image upload to cloud storage
-    // For now, we'll simulate upload
-    setTimeout(() => {
+    try {
+      // Convert file to base64 for preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        // For now, we'll just show a preview using the base64 data
+        // In a real implementation, this would upload to cloud storage
+        const imageData = reader.result as string;
+        
+        // Update the user's profile image locally
+        if (user) {
+          setUser({
+            ...user,
+            profile_image_url: imageData
+          });
+        }
+        
+        setIsUploading(false);
+        toast.success('Profile image uploaded successfully');
+      };
+      
+      reader.onerror = () => {
+        setIsUploading(false);
+        toast.error('Failed to process image file');
+      };
+      
+      reader.readAsDataURL(file);
+    } catch {
       setIsUploading(false);
-      toast.success('Profile image uploaded successfully');
-    }, 2000);
+      toast.error('Failed to upload image');
+    }
   };
 
   const validatePassword = (password: string) => {

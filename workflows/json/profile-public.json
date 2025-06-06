@@ -1,0 +1,27 @@
+{
+  "name": "Get Public User Profile",
+  "description": "Retrieve a public user profile by user ID",
+  "version": "1.0.0",
+  "trigger": {
+    "http": {
+      "method": "GET",
+      "path": "/",
+      "accept": "application/json"
+    }
+  },
+  "steps": [
+    {
+      "name": "get-public-profile",
+      "node": "user-profile",
+      "type": "module"
+    }
+  ],
+  "nodes": {
+    "get-public-profile": {
+      "inputs": {
+        "operation": "public-profile",
+        "userId": "${ctx.request.query.userId}"
+      }
+    }
+  }
+} 
