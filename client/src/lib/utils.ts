@@ -65,6 +65,16 @@ export function generateAvatarUrl(username: string) {
   return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username)}&backgroundColor=3b82f6&textColor=ffffff`;
 }
 
+export function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toString();
+}
+
 export function debounce<T extends (...args: never[]) => unknown>(
   func: T,
   wait: number

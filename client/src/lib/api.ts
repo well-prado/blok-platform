@@ -363,4 +363,39 @@ export const communityApi = {
   },
 };
 
+// AI API
+export const aiApi = {
+  generateWorkflow: async (prompt: string, context?: Record<string, unknown>) => {
+    const response = await api.post('/ai/generate-workflow', { 
+      prompt, 
+      context,
+      options: {
+        temperature: 0.7,
+        max_tokens: 2000,
+      }
+    });
+    return response.data;
+  },
+
+  chatComplete: async (messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>) => {
+    const response = await api.post('/ai/chat', { 
+      messages,
+      options: {
+        temperature: 0.7,
+        max_tokens: 1000,
+      }
+    });
+    return response.data;
+  },
+
+  semanticSearch: async (query: string, filters?: Record<string, unknown>) => {
+    const response = await api.post('/ai/semantic-search', { 
+      query, 
+      filters,
+      limit: 10,
+    });
+    return response.data;
+  },
+};
+
 export default api; 

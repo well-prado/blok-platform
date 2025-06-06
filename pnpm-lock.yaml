@@ -83,6 +83,9 @@ importers:
       mongodb:
         specifier: ^6.17.0
         version: 6.17.0
+      openai:
+        specifier: ^5.1.1
+        version: 5.1.1(ws@8.18.2)(zod@3.25.51)
       pg:
         specifier: ^8.13.3
         version: 8.16.0
@@ -1227,6 +1230,18 @@ packages:
   open@10.1.2:
     resolution: {integrity: sha512-cxN6aIDPz6rm8hbebcP7vrQNhvRcveZoJU72Y7vskh4oIm+BZwBECnx5nTmrlres1Qapvx27Qo1Auukpf8PKXw==}
     engines: {node: '>=18'}
+
+  openai@5.1.1:
+    resolution: {integrity: sha512-lgIdLqvpLpz8xPUKcEIV6ml+by74mbSBz8zv/AHHebtLn/WdpH4kdXT3/Q5uUKDHg3vHV/z9+G9wZINRX6rkDg==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
@@ -2906,6 +2921,11 @@ snapshots:
       define-lazy-prop: 3.0.0
       is-inside-container: 1.0.0
       is-wsl: 3.1.0
+
+  openai@5.1.1(ws@8.18.2)(zod@3.25.51):
+    optionalDependencies:
+      ws: 8.18.2
+      zod: 3.25.51
 
   package-json-from-dist@1.0.1: {}
 

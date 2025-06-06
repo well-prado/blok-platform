@@ -1,0 +1,29 @@
+{
+	"name": "AI Semantic Search",
+	"description": "Perform semantic search on workflows using AI embeddings",
+	"version": "1.0.0",
+	"trigger": {
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"accept": "application/json"
+		}
+	},
+	"steps": [
+		{
+			"name": "semantic-search",
+			"node": "ai-semantic-search",
+			"type": "module"
+		}
+	],
+	"nodes": {
+		"semantic-search": {
+			"inputs": {
+				"query": "${ctx.request.body.query}",
+				"filters": "${ctx.request.body.filters}",
+				"limit": "${ctx.request.body.limit}",
+				"user": "${ctx.user}"
+			}
+		}
+	}
+} 

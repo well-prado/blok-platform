@@ -18,6 +18,8 @@ import WorkflowsPage from './pages/WorkflowsPage';
 import WorkflowDetailPage from './pages/WorkflowDetailPage';
 import CreateWorkflowPage from './pages/CreateWorkflowPage';
 import EditWorkflowPage from './pages/EditWorkflowPage';
+import AIWorkflowPage from './pages/AIWorkflowPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import DashboardPage from './pages/DashboardPage';
 
 // Create a React Query client
@@ -88,6 +90,18 @@ function App() {
               <Route path="workflows/:id/edit" element={
                 <ProtectedRoute>
                   <EditWorkflowPage />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="ai-workflows" element={
+                <ProtectedRoute>
+                  <AIWorkflowPage />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="analytics" element={
+                <ProtectedRoute>
+                  <AnalyticsPage />
                 </ProtectedRoute>
               } />
               

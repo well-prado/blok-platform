@@ -1,0 +1,29 @@
+{
+	"name": "AI Workflow Generation",
+	"description": "Generate workflows using OpenAI based on natural language prompts",
+	"version": "1.0.0",
+	"trigger": {
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"accept": "application/json"
+		}
+	},
+	"steps": [
+		{
+			"name": "generate-workflow",
+			"node": "ai-workflow-generator",
+			"type": "module"
+		}
+	],
+	"nodes": {
+		"generate-workflow": {
+			"inputs": {
+				"prompt": "${ctx.request.body.prompt}",
+				"context": "${ctx.request.body.context}",
+				"options": "${ctx.request.body.options}",
+				"user": "${ctx.user}"
+			}
+		}
+	}
+} 

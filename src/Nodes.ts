@@ -7,6 +7,7 @@ import AuthNodes from "./nodes/auth";
 import UserProfileNodes from "./nodes/user-profile";
 import WorkflowCrudNodes from "./nodes/workflow-crud";
 import CommunityNodes from "./nodes/community";
+import AiNodes from "./nodes/ai";
 
 const nodes: {
 	[key: string]: NodeBase;
@@ -18,6 +19,7 @@ const nodes: {
 	...UserProfileNodes,
 	...WorkflowCrudNodes,
 	...CommunityNodes,
+	...AiNodes,
 };
 
 export default nodes;

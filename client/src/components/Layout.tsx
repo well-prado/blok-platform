@@ -1,9 +1,10 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Search, User, LogOut, Menu, X, Plus, Home, Briefcase } from 'lucide-react';
+import { User, LogOut, Menu, X, Plus, Home, Briefcase, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '../stores/auth';
 import { generateAvatarUrl } from '../lib/utils';
 import ToastContainer from './ToastContainer';
+import NotificationsPanel from './NotificationsPanel';
 
 export default function Layout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,6 +24,7 @@ export default function Layout() {
 
   const userNavigation = [
     { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Analytics', href: '/analytics' },
     { name: 'Profile', href: '/profile' },
   ];
 
@@ -66,35 +68,22 @@ export default function Layout() {
                 })}
               </div>
             </div>
-
-            {/* Search bar */}
-            <div className="flex-1 flex justify-center px-4 md:px-6 lg:px-8 max-w-md mx-auto">
-              <div className="w-full">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-secondary-400" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search workflows..."
-                    className="block w-full pl-10 pr-3 py-2 border border-secondary-300 rounded-lg text-sm placeholder:text-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        const query = (e.target as HTMLInputElement).value;
-                        if (query.trim()) {
-                          window.location.href = `/workflows?search=${encodeURIComponent(query)}`;
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Right side navigation */}
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
+                  {/* Notifications */}
+                  <NotificationsPanel />
+
+                  {/* AI Workflows button */}
+                  <Link
+                    to="/ai-workflows"
+                    className="btn-secondary hidden sm:inline-flex"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    AI Generate
+                  </Link>
+
                   {/* Create workflow button */}
                   <Link
                     to="/workflows/create"
